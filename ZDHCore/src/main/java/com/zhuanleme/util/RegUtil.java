@@ -1,5 +1,8 @@
 package com.zhuanleme.util;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * <p>Project: com.zhuanleme.util</p>
  * <p>Title: RegUtil.java</p>
@@ -78,7 +81,7 @@ public class RegUtil {
     /**
      * EMAIL
      */
-    public static final String REG_EMAIL= "^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$";
+    public static final String REG_EMAIL = "^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$";
     /**
      * 国内固定电话
      */
@@ -100,4 +103,64 @@ public class RegUtil {
      * 移动电话
      */
     public static final String REG_MOBILE_TELEPHONE = "^(13[0-9]|14[5|7]|15[0|1|2|3|4|5|6|7|8|9]|18[0|1|2|3|4|5|6|7|8|9])\\d{8}$";
+    /**
+     * 合法的名字（字母开头，语序5-16字节，语序字母数字下划线）
+     */
+    public static final String REG_LEGAL_ACCOUNT = "^[a-zA-Z][a-zA-Z0-9_]{4,15}$";
+
+    /**
+     * 判断是否数字表示
+     *
+     * @param src
+     * @return
+     */
+    public static boolean isNumeric(String src) {
+        boolean return_value = false;
+        if (ValidUtil.isValid(src)) {
+            Pattern pattern = Pattern.compile(REG_DIGITS);
+            Matcher matcher = pattern.matcher(src);
+            if (matcher.find()){
+                return_value = true;
+            }
+        }
+        return return_value;
+    }
+
+    /**
+     * 判断字符串是否符合正则表达式
+     *
+     * @param str 需要处理的字符串
+     * @param reg 正则
+     * @return
+     */
+    public static boolean isMatcher(String str, String reg) {
+        Pattern pattern = Pattern.compile(reg);
+        Matcher matcher = pattern.matcher(str);
+        return matcher.matches();
+    }
+
+    /**
+     * 通过正则表达式获取字符串出现的次数
+     *
+     * @param str
+     * @param reg
+     * @return
+     */
+    public static int countString(String str, String reg) {
+        Pattern pattern = Pattern.compile(reg);
+        Matcher matcher = pattern.matcher(str);
+        int i = 0;
+        while (matcher.find()) {
+            i++;
+        }
+        return i;
+    }
+
+    public static boolean isEmail(String email) {
+        if (ValidUtil.isValid(email) || email.length() > 256) {
+            return false;
+        }
+        Pattern pattern = Pattern.compile(REG_EMAIL);
+        return pattern.matcher(email).matches();
+    }
 }
