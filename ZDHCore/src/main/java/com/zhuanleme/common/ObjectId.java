@@ -322,9 +322,9 @@ public class ObjectId implements Comparable<ObjectId>, Serializable {
             String s = Integer.toHexString(x);
             if (s.length() == 1)
                 stringBuilder.append("0");
-            return stringBuilder.toString();
+                stringBuilder.append(s);
         }
-        return null;
+        return stringBuilder.toString();
     }
 
     public byte[] toByteArray() {
