@@ -29,6 +29,8 @@
         <selenium.java.version>2.46.0</selenium.java.version>
         <selenium.driver.version>2.46.0</selenium.driver.version>
         <collection.version>4.0</collection.version>
+        <mail.version>1.5.2</mail.version>
+        <mailversion>1.5.0-b01</mailversion>
 
     </properties>
 
@@ -178,6 +180,17 @@
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-remote-driver</artifactId>
             <version>${selenium.driver.version}</version>
+        </dependency>
+        <!-- java mail -->
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+            <version>1.5.0-b01</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>javax.mail-api</artifactId>
+            <version>${mail.version}</version>
         </dependency>
         <!-- test module end-->
         <!--&lt;!&ndash; test begin&ndash;&gt;-->
