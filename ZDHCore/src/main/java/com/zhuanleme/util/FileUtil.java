@@ -4,6 +4,7 @@ import java.io.*;
 import java.net.FileNameMap;
 import java.net.URLConnection;
 import java.nio.ByteBuffer;
+import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Date;
@@ -13,11 +14,11 @@ import java.util.List;
  * 封装了文件相关的操作
  */
 public class FileUtil {
+
     /**
      * Buffer的大小
      */
     private static Integer BUFFER_SIZE = 1024 * 1024 * 10;
-
 
     /**
      * 获取文件的行数
@@ -137,6 +138,82 @@ public class FileUtil {
     }
 
     /**
+     * 以字节的方式读取文件
+     * @param file
+     * @return
+     */
+    public static byte[] readAsByte(File file) {
+        byte[] res = new byte[0];
+        try (FileInputStream fs = new FileInputStream(file);
+             FileChannel channel = fs.getChannel()
+        ) {
+            ByteBuffer byteBuffer = ByteBuffer.allocate((int) channel.size());
+            while ((channel.read(byteBuffer)) > 0){
+
+            }
+            res = byteBuffer.array();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+    /**
+     * 以字节的方式读取较大的文件
+     * @param file
+     * @return
+     */
+    public static byte[] readAsByteWithBigFile(File file){
+        byte[] res = new byte[0];
+        try (
+                FileChannel fileChannel = new RandomAccessFile(file, "r").getChannel();
+                ){
+            MappedByteBuffer byteBuffer = fileChannel.map(FileChannel.MapMode.READ_ONLY, 0 ,fileChannel.size()).load();
+            res = new byte[(int)fileChannel.size()];
+            if(byteBuffer.remaining() > 0){
+                byteBuffer.get(res, 0, byteBuffer.remaining());
+            }
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return  res;
+    }
+
+    /**
+     * 以字符串的方式读取文件
+     * @param file
+     * @param encoding
+     * @return
+     */
+    public static String readAsString(File file,String encoding){
+        String res = "";
+        try {
+            res = new String(readAsByte(file),encoding);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+    /**
+     * 以字符串放置读取较大文件
+     * @param file
+     * @param enconding
+     * @return
+     */
+    public static String readAsStringWithBigFile(File file,String enconding){
+        String res = "";
+        try {
+            res = new String(readAsByteWithBigFile(file),enconding);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+    /**
      * 在文件末尾追加一行
      *
      * @param file 需要处理的函数
@@ -185,7 +262,7 @@ public class FileUtil {
      * 将字符串写入到文件中
      * mode r 只读 rw 读写 rwd 读写并且保存硬盘 rws
      */
-    public static boolean write(File file,String str){
+    public static boolean write(File file, String str) {
         try (
                 RandomAccessFile randomFile = new RandomAccessFile(file, "rw")
         ) {
@@ -200,7 +277,7 @@ public class FileUtil {
     /**
      * 将字符串已追加的方式写入到文件中
      */
-    public static boolean writeAppend(File file,String str){
+    public static boolean writeAppend(File file, String str) {
         try (
                 RandomAccessFile randomFile = new RandomAccessFile(file, "rw")
         ) {
@@ -217,7 +294,7 @@ public class FileUtil {
     /**
      * 将字符串以指定的编码写入到文件中
      */
-    public static boolean write(File file,String str,String encoding){
+    public static boolean write(File file, String str, String encoding) {
         try (
                 RandomAccessFile randomFile = new RandomAccessFile(file, "rw")
         ) {
@@ -232,7 +309,7 @@ public class FileUtil {
     /**
      * 将字符串以追加的方式以指定的编码写入到文件中
      */
-    public static boolean writeAppend(File file,String str,String encoding){
+    public static boolean writeAppend(File file, String str, String encoding) {
         try (
                 RandomAccessFile randomFile = new RandomAccessFile(file, "rw")
         ) {
@@ -275,7 +352,6 @@ public class FileUtil {
         FileNameMap fileNameMap = URLConnection.getFileNameMap();
         return fileNameMap.getContentTypeFor(file);
     }
-
     /**
      * 获取文件的类型
      * <p/>
@@ -297,7 +373,6 @@ public class FileUtil {
     public static Date modifyTime(File file) {
         return new Date(file.lastModified());
     }
-
     /**
      * 获取文件的hash
      *
@@ -337,7 +412,6 @@ public class FileUtil {
         }
         return false;
     }
-
     /**
      * 获取文件的编码(cpDetector)探测
      *
@@ -352,7 +426,6 @@ public class FileUtil {
 //        }
 //        return null;
 //    }
-
     /**
      * 利用简单的文件头字节特征探测文件编码
      *
@@ -387,7 +460,7 @@ public class FileUtil {
      */
     public static boolean createFiles(String filePath) {
         File file = new File(filePath);
-        File dir  = file.getParentFile();
+        File dir = file.getParentFile();
         if (!dir.exists()) {
             if (dir.mkdirs()) {
                 try {
@@ -429,7 +502,6 @@ public class FileUtil {
         }
         return file.delete();
     }
-
 
     /**
      * 快速删除超大的文件
@@ -494,8 +566,8 @@ public class FileUtil {
      * @return 返回文件列表
      */
     public static List<File> listFile(File path) {
-        List<File> list  = new ArrayList<>();
-        File[]     files = path.listFiles();
+        List<File> list = new ArrayList<>();
+        File[] files = path.listFiles();
         if (ValidUtil.isValid(files)) {
             for (File file : files) {
                 if (file.isDirectory()) {
@@ -515,8 +587,8 @@ public class FileUtil {
      * @return 返回文件列表
      */
     public static List<File> listFileAll(File path) {
-        List<File> list  = new ArrayList<>();
-        File[]     files = path.listFiles();
+        List<File> list = new ArrayList<>();
+        File[] files = path.listFiles();
         if (ValidUtil.isValid(files)) {
             for (File file : files) {
                 list.add(file);
@@ -536,8 +608,8 @@ public class FileUtil {
      * @return 返回文件列表
      */
     public static List<File> listFileFilter(File path, FilenameFilter filter) {
-        List<File> list  = new ArrayList<>();
-        File[]     files = path.listFiles();
+        List<File> list = new ArrayList<>();
+        File[] files = path.listFiles();
         if (ValidUtil.isValid(files)) {
             for (File file : files) {
                 if (file.isDirectory()) {
@@ -568,8 +640,8 @@ public class FileUtil {
             }
         };
         */
-        List<File> list  = new ArrayList<File>();
-        File[]     files = dirPath.listFiles();
+        List<File> list = new ArrayList<File>();
+        File[] files = dirPath.listFiles();
         if (ValidUtil.isValid(files)) {
             for (File file : files) {
                 if (file.isDirectory()) {
@@ -593,8 +665,8 @@ public class FileUtil {
      * @return 返回文件列表
      */
     public static List<File> searchFile(File dirPath, String fileName) {
-        List<File> list  = new ArrayList<>();
-        File[]     files = dirPath.listFiles();
+        List<File> list = new ArrayList<>();
+        File[] files = dirPath.listFiles();
         if (ValidUtil.isValid(files)) {
             for (File file : files) {
                 if (file.isDirectory()) {
@@ -618,8 +690,8 @@ public class FileUtil {
      * @return 返回文件列表
      */
     public static List<File> searchFileReg(File dirPath, String reg) {
-        List<File> list  = new ArrayList<>();
-        File[]     files = dirPath.listFiles();
+        List<File> list = new ArrayList<>();
+        File[] files = dirPath.listFiles();
         if (ValidUtil.isValid(files)) {
             for (File file : files) {
                 if (file.isDirectory()) {
@@ -634,5 +706,4 @@ public class FileUtil {
         }
         return list;
     }
-
 }
