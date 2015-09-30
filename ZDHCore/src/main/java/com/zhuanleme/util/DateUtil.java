@@ -481,11 +481,12 @@ public class DateUtil {
 
     /**
      * 两个时间差 年
+     *
      * @param date1
      * @param date2
      * @return
      */
-    public static int SubtractYear(String date1, String date2){
+    public static int SubtractYear(String date1, String date2) {
         int result;
         Calendar calendar1 = Calendar.getInstance();
         Calendar calendar2 = Calendar.getInstance();
@@ -504,11 +505,12 @@ public class DateUtil {
 
     /**
      * 时间差 年
+     *
      * @param date1
      * @param date2
      * @return
      */
-    public static int SubtractYear(Date date1, Date date2){
+    public static int SubtractYear(Date date1, Date date2) {
         int result;
         Calendar calendar1 = Calendar.getInstance();
         Calendar calendar2 = Calendar.getInstance();
@@ -522,25 +524,85 @@ public class DateUtil {
 
     /**
      * 返回一个格式化时间差
+     *
      * @param date1
      * @param date2
      * @return 几小时 ： 几分钟 ： 几秒钟
      */
-    public static String SubStractTime(String date1, String date2){
+    public static String SubStractTime(String date1, String date2) {
         String result = "";
         try {
             Date start = DateTimeInstance().parse(date1);
             Date end = DateTimeInstance().parse(date2);
-
             long sss = (end.getTime() - start.getTime()) / 1000;
             int hh = (int) sss / (60 * 60);
             int mm = (int) (sss - hh * 60 * 60) / (60);
             int ss = (int) (sss - hh * 60 * 60 - mm * 60);
             result = hh + ":" + mm + ":" + ss;
-
         } catch (ParseException e) {
             e.printStackTrace();
         }
         return result;
     }
+
+    /**
+     * 将时间转换成指定格式时间 几天-几时:几分:几秒
+     *
+     * @param date1
+     * @param date2
+     * @return
+     */
+    public static String SubStractDate(String date1, String date2) {
+        String result = "";
+        try {
+            Date start = DateTimeInstance().parse(date1);
+            Date end = DateTimeInstance().parse(date2);
+            long sss = (end.getTime() - start.getTime()) / 1000;
+            int dd = (int) sss / (60 * 60 * 24);
+            int hh = (int) (sss - dd * 60 * 60 * 24) / (60 * 60);
+            int mm = (int) (sss - dd * 60 * 60 * 24 - hh * 60 * 60) / (60);
+            int ss = (int) (sss - dd * 60 * 60 * 24 - hh * 60 * 60 - mm * 60);
+            result = dd + "-" + hh + ":" + mm + ":" + ss;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    public static int SubDay(Date startDate, Date endDate) {
+        int days = 0;
+        Calendar calendar1 = Calendar.getInstance();
+        calendar1.setTime(startDate);
+        Calendar calendar2 = Calendar.getInstance();
+        calendar2.setTime(endDate);
+        int year1 = calendar1.get(Calendar.YEAR);
+        int year2 = calendar2.get(Calendar.YEAR);
+        Calendar calendar = null;
+        if (calendar1.before(calendar2)) {
+            days -= calendar1.get(Calendar.DAY_OF_YEAR);
+            days += calendar2.get(Calendar.DAY_OF_YEAR);
+            calendar = calendar1;
+        } else {
+            days += calendar1.get(Calendar.DAY_OF_YEAR);
+            days -= calendar2.get(Calendar.DAY_OF_YEAR);
+            calendar = calendar2;
+        }
+        for (int i = 0; i < Math.abs(year2 - year1); i++) {
+            days += calendar.getActualMaximum(Calendar.DAY_OF_YEAR);
+            calendar.add(Calendar.YEAR, 1);
+        }
+        return days;
+    }
+
+    public static int SubDay(String dateStart, String dateEnd) {
+        int days = 0;
+        Date date1 = DateTimeInstance().parse(DateTimeInstance().format(DateTimeInstance().parse(dateStart)));
+        Date date2 = DateTimeInstance().parse(DateTimeInstance().format(DateTimeInstance().parse(dateEnd)));
+        days = SubDay(date1, date2);
+        return days;
+    }
+    public static long subtimeBurst(Date startDate, Date endDate, String timeBurst){
+        
+    }
+
 }
