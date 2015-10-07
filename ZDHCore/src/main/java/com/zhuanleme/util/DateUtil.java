@@ -720,4 +720,80 @@ public class DateUtil {
         Date endDate = DateTimeInstance().parse(date2);
         return subtimeBurst(startDate, endDate, timeBurst);
     }
+
+    /**
+     * 时间Date在时间段(例如每天的08:00-18:00)上增加或减去second秒
+     *
+     * @param date
+     * @param second
+     * @param timeBurst
+     * @return 计算后的时间
+     * @Suumary 指定的格式错误后返回原数据
+     */
+    public static Date calculate(Date date, int second, String timeBurst) {
+        Pattern            p   = Pattern.compile("^\\d{2}:\\d{2}-\\d{2}:\\d{2}");
+        Matcher            m   = p.matcher(timeBurst);
+        java.util.Calendar cal = java.util.Calendar.getInstance();
+        if (m.matches()) {
+            String[] a = timeBurst.split("-");
+            try {
+                Date dayStart = DateTimeInstance().parse(DateInstance().format(date) + " " + a[0] + ":00");
+                Date dayEnd = DateTimeInstance().parse(DateInstance().format(date) + " " + a[1] + ":00");
+                int DaySecond = (int) Subtract(dayStart, dayEnd);
+                int toDaySecond = (int) Subtract(dayStart, dayEnd);
+                if (second >= 0) {
+                    if ((date.after(dayStart) || date.equals(dayStart)) && (date.before(dayEnd) || date.equals(dayEnd))) {
+                        cal.setTime(date);
+                        toDaySecond = (int) Subtract(date, dayEnd);
+                    }
+                    if (date.before(dayStart)) {
+                        cal.setTime(dayStart);
+                        toDaySecond = (int) Subtract(dayStart, dayEnd);
+                    }
+                    if (date.after(dayEnd)) {
+                        cal.setTime(day(dayStart, 1));
+                        toDaySecond = 0;
+                    }
+
+                    if (second > toDaySecond) {
+                        int day = (second - toDaySecond) / DaySecond;
+                        int remainder = (second - toDaySecond) % DaySecond;
+                        cal.setTime(day(dayStart, 1));
+                        cal.add(Calendar.DAY_OF_YEAR, day);
+                        cal.add(Calendar.SECOND, remainder);
+                    } else {
+                        cal.add(Calendar.SECOND, second);
+                    }
+
+                } else {
+                    if ((date.after(dayStart) || date.equals(dayStart)) && (date.before(dayEnd) || date.equals(dayEnd))) {
+                        cal.setTime(date);
+                        toDaySecond = (int) Subtract(date, dayStart);
+                    }
+                    if (date.before(dayStart)) {
+                        cal.setTime(day(dayEnd, -1));
+                        toDaySecond = 0;
+                    }
+                    if (date.after(dayEnd)) {
+                        cal.setTime(dayEnd);
+                        toDaySecond = (int) Subtract(dayStart, dayEnd);
+                    }
+                    if (Math.abs(second) > Math.abs(toDaySecond)) {
+                        int day = (Math.abs(second) - Math.abs(toDaySecond)) / DaySecond;
+                        int remainder = (Math.abs(second) - Math.abs(toDaySecond)) % DaySecond;
+                        cal.setTime(day(dayEnd, -1));
+                        cal.add(Calendar.DAY_OF_YEAR, Integer.valueOf("-" + day));
+                        cal.add(Calendar.SECOND, Integer.valueOf("-" + remainder));
+                    } else {
+                        cal.add(Calendar.SECOND, second);
+                    }
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        } else {
+            cal.setTime(date);
+        }
+        return cal.getTime();
+    }
 }
