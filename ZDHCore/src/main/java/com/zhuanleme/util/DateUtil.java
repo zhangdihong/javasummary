@@ -4,6 +4,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * <p>Project: com.zhuanleme.util</p>
@@ -569,6 +571,13 @@ public class DateUtil {
         return result;
     }
 
+    /**
+     * 获取两个时间的天数差
+     *
+     * @param startDate
+     * @param endDate
+     * @return
+     */
     public static int SubDay(Date startDate, Date endDate) {
         int days = 0;
         Calendar calendar1 = Calendar.getInstance();
@@ -594,15 +603,121 @@ public class DateUtil {
         return days;
     }
 
+    /**
+     * 获取天数差
+     *
+     * @param dateStart
+     * @param dateEnd
+     * @return
+     */
     public static int SubDay(String dateStart, String dateEnd) {
         int days = 0;
-        Date date1 = DateTimeInstance().parse(DateTimeInstance().format(DateTimeInstance().parse(dateStart)));
-        Date date2 = DateTimeInstance().parse(DateTimeInstance().format(DateTimeInstance().parse(dateEnd)));
-        days = SubDay(date1, date2);
+        Date date1 = null;
+        try {
+            date1 = DateTimeInstance().parse(DateTimeInstance().format(DateTimeInstance().parse(dateStart)));
+            Date date2 = DateTimeInstance().parse(DateTimeInstance().format(DateTimeInstance().parse(dateEnd)));
+            days = SubDay(date1, date2);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         return days;
     }
-    public static long subtimeBurst(Date startDate, Date endDate, String timeBurst){
-        
+
+    /**
+     * 指定格式时间内的 两个时间差
+     *
+     * @param startDate
+     * @param endDate
+     * @param timeBurst 08:00-18:00
+     * @return
+     * @throws ParseException
+     */
+    public static long subtimeBurst(Date startDate, Date endDate, String timeBurst) throws ParseException {
+        long seconds = 0;
+        Pattern pattern = Pattern.compile("^\\d{2}:\\d{2}-\\d{2}:\\d{2}");
+        Matcher matcher = pattern.matcher(timeBurst);
+        boolean falg = false;
+        if (startDate.after(endDate)) {
+            Date temp = startDate;
+            startDate = endDate;
+            endDate = temp;
+            falg = true;
+        }
+        if (matcher.matches()) {
+            String[] arg = timeBurst.split("-");
+            int day = SubDay(startDate, endDate);
+            if (day > 0) {
+                long firstMinutes = 0;
+                long lastMinutes = 0;
+                long daySecond = 0;
+                String strDayStart = DateInstance().format(startDate) + " " + arg[0] + ":00";
+                String strDayEnd = DateInstance().format(endDate) + " " + arg[1] + ":00";
+                Date dayStart = DateTimeInstance().parse(strDayStart);
+                Date dayEnd = DateTimeInstance().parse(strDayEnd);
+                daySecond = Subtract(dayStart, dayEnd);
+                if (startDate.after(dayStart) || startDate.equals(dayStart) && startDate.before(dayEnd)) {
+                    firstMinutes = Subtract(startDate, dayEnd);
+                } else if (startDate.before(dayStart)) {
+                    firstMinutes = Subtract(dayStart, dayEnd);
+                }
+                dayStart = DateTimeInstance().parse(DateInstance().format(startDate + " " + arg[0] + ":00"));
+                dayEnd = DateTimeInstance().parse(DateInstance().format(startDate + " " + arg[1] + ":00"));
+                if (endDate.after(dayStart) && endDate.before(dayEnd) || endDate.equals(dayEnd)) {
+                    lastMinutes = Subtract(endDate, dayStart);
+                } else if (endDate.after(dayEnd)) {
+                    lastMinutes = Subtract(dayEnd, dayStart);
+                }
+                seconds = firstMinutes + lastMinutes;
+                seconds += (day - 1) * daySecond;
+            } else {
+                String strDayStart = DateInstance().format(startDate) + " " + arg[0] + ":00";
+                String strDayEnd = DateInstance().format(endDate) + " " + arg[1] + ":00";
+                Date dayStart = DateTimeInstance().parse(strDayStart);
+                Date dayEnd = DateTimeInstance().parse(strDayEnd);
+                if (startDate.after(dayStart) || startDate.equals(dayStart) && startDate.before(dayEnd) && endDate.after(dayStart) && (endDate.before(dayEnd) || endDate.equals(dayEnd))) {
+                    seconds = Subtract(endDate, startDate);
+                } else {
+                    if (startDate.before(dayStart)) {
+                        if (endDate.before(dayEnd)) {
+                            seconds = Subtract(endDate, dayStart);
+                        } else {
+                            seconds = Subtract(dayEnd, dayStart);
+                        }
+                    }
+                    if (startDate.after(dayStart)) {
+                        if (endDate.before(dayEnd)) {
+                            seconds = Subtract(endDate, startDate);
+                        } else {
+                            seconds = Subtract(dayEnd, startDate);
+                        }
+                    }
+                    if (startDate.before(dayStart) && endDate.before(dayStart) || startDate.after(dayEnd) && endDate.after(dayEnd)) {
+                        seconds = 0;
+                    }
+                }
+            }
+        } else {
+            seconds = Subtract(startDate, endDate);
+        }
+        if (falg) {
+            seconds = Long.parseLong("-" + seconds);
+        }
+        return seconds;
     }
 
+    /**
+     * /**
+     * 指定格式时间内的 两个时间差
+     *
+     * @param date1
+     * @param date2
+     * @param timeBurst 08:00-18:00
+     * @return
+     * @throws ParseException
+     */
+    public static long subtimeBurst(String date1, String date2, String timeBurst) throws ParseException {
+        Date startDate = DateTimeInstance().parse(date1);
+        Date endDate = DateTimeInstance().parse(date2);
+        return subtimeBurst(startDate, endDate, timeBurst);
+    }
 }
