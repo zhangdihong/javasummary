@@ -15,7 +15,6 @@ import java.util.regex.Pattern;
  * <p/>
  * <p>Copyright: Copyright (c) 2015 </p>
  * <p/>
- * <p>Company: 华炜云商科技有限公司 www.hwtech.cc</p>
  *
  * @author zhangdihong
  * @version 1.0
