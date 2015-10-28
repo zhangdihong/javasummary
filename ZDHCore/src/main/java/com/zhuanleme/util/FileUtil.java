@@ -139,6 +139,7 @@ public class FileUtil {
 
     /**
      * 以字节的方式读取文件
+     *
      * @param file
      * @return
      */
@@ -148,8 +149,7 @@ public class FileUtil {
              FileChannel channel = fs.getChannel()
         ) {
             ByteBuffer byteBuffer = ByteBuffer.allocate((int) channel.size());
-            while ((channel.read(byteBuffer)) > 0){
-
+            while ((channel.read(byteBuffer)) > 0) {
             }
             res = byteBuffer.array();
         } catch (IOException e) {
@@ -160,38 +160,39 @@ public class FileUtil {
 
     /**
      * 以字节的方式读取较大的文件
+     *
      * @param file
      * @return
      */
-    public static byte[] readAsByteWithBigFile(File file){
+    public static byte[] readAsByteWithBigFile(File file) {
         byte[] res = new byte[0];
         try (
                 FileChannel fileChannel = new RandomAccessFile(file, "r").getChannel();
-                ){
-            MappedByteBuffer byteBuffer = fileChannel.map(FileChannel.MapMode.READ_ONLY, 0 ,fileChannel.size()).load();
-            res = new byte[(int)fileChannel.size()];
-            if(byteBuffer.remaining() > 0){
+        ) {
+            MappedByteBuffer byteBuffer = fileChannel.map(FileChannel.MapMode.READ_ONLY, 0, fileChannel.size()).load();
+            res = new byte[(int) fileChannel.size()];
+            if (byteBuffer.remaining() > 0) {
                 byteBuffer.get(res, 0, byteBuffer.remaining());
             }
-
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return  res;
+        return res;
     }
 
     /**
      * 以字符串的方式读取文件
+     *
      * @param file
      * @param encoding
      * @return
      */
-    public static String readAsString(File file,String encoding){
+    public static String readAsString(File file, String encoding) {
         String res = "";
         try {
-            res = new String(readAsByte(file),encoding);
+            res = new String(readAsByte(file), encoding);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
@@ -200,19 +201,21 @@ public class FileUtil {
 
     /**
      * 以字符串放置读取较大文件
+     *
      * @param file
      * @param enconding
      * @return
      */
-    public static String readAsStringWithBigFile(File file,String enconding){
+    public static String readAsStringWithBigFile(File file, String enconding) {
         String res = "";
         try {
-            res = new String(readAsByteWithBigFile(file),enconding);
+            res = new String(readAsByteWithBigFile(file), enconding);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
         return res;
     }
+
     /**
      * 在文件末尾追加一行
      *

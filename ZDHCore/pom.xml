@@ -199,6 +199,22 @@
             <version>2.5.0</version>
         </dependency>
         <!-- 中文转拼音 end-->
+        <!-- jchardet  start-->
+        <dependency>
+            <groupId>net.sourceforge.jchardet</groupId>
+            <artifactId>jchardet</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <!-- jchardet  end-->
+        <!-- antl start-->
+        <dependency>
+            <groupId>antlr</groupId>
+            <artifactId>antlr</artifactId>
+            <version>2.7.7</version>
+        </dependency>
+
+        <!-- antl end-->
+        <!-- -->
         <!-- test module end-->
         <!--&lt;!&ndash; test begin&ndash;&gt;-->
         <!--<dependency>-->
