@@ -19,7 +19,7 @@ import java.util.Date;
 /**
  * FTP 文件属性
  */
-public class FTPAttr {
+public class FileAttr {
 
     private String fileName;
     private Date modifyTime;

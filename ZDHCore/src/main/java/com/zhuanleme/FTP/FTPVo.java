@@ -38,4 +38,67 @@ public class FTPVo {
         this.passiveMode = passiveMode;
     }
 
+    public String getHostName() {
+        return hostName;
+    }
+
+    public void setHostName(String hostName) {
+        this.hostName = hostName;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getPassWord() {
+        return passWord;
+    }
+
+    public void setPassWord(String passWord) {
+        this.passWord = passWord;
+    }
+
+    public String getRemoteDir() {
+        return remoteDir;
+    }
+
+    public void setRemoteDir(String remoteDir) {
+        this.remoteDir = remoteDir;
+    }
+
+    public String getLocalDir() {
+        return localDir;
+    }
+
+    public void setLocalDir(String localDir) {
+        this.localDir = localDir;
+    }
+
+    public String getRemoteEncoding() {
+        return remoteEncoding;
+    }
+
+    public void setRemoteEncoding(String remoteEncoding) {
+        this.remoteEncoding = remoteEncoding;
+    }
+
+    public boolean isPassiveMode() {
+        return passiveMode;
+    }
+
+    public void setPassiveMode(boolean passiveMode) {
+        this.passiveMode = passiveMode;
+    }
 }

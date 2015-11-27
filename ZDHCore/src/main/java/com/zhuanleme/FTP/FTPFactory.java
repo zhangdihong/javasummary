@@ -23,7 +23,7 @@ public class FTPFactory {
         CONFIG_FILE = path.getPath() + "ftp.properties";
     }
 
-    public static FTPUtil getInstance(){
+    public static FTPUtil getInstance(String name){
         return null;
     }
 
